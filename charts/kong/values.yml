@@ -21,14 +21,19 @@ env:
   password:
     valueFrom:
       secretKeyRef:
-        name: kong-enterprise-superuser-password
-        key: passwor
+        name: kong-superuser-password
+        key: password
 
 admin:
   enabled: true
   annotations:
     konghq.com/protocol: "https"
-
+    telegraf.influxdata.com/image: telegraf:1.21-alpine
+    telegraf.influxdata.com/class: "kong"
+    telegraf.influxdata.com/interval: 1s
+    telegraf.influxdata.com/path: /status
+    telegraf.influxdata.com/port: "8100"
+    telegraf.influxdata.com/scheme: http
   tls:
     enabled: true
     servicePort: 8444
@@ -39,7 +44,7 @@ admin:
   ingress:
     enabled: true
     tls: ingress-admin-tls-secret
-    hostname: admin.kong.deejiw.example
+    hostname: admin.kong.deejiw.com
     annotations:
       kubernetes.io/ingress.class: "kong"
     path: /
@@ -73,31 +78,6 @@ proxy:
 
 enterprise:
   enabled: false
-  # license_secret: kong-enterprise-license
-  # vitals:
-  #   enabled: true
-  # portal:
-  #   enabled: true
-  # rbac:
-  #   enabled: true
-  #   admin_gui_auth: basic-auth
-  #   session_conf_secret: kong-session-config
-  #   admin_gui_auth_conf_secret: CHANGEME-admin-gui-auth-conf-secret
-  # smtp:
-  #   enabled: false
-  #   portal_emails_from: none@example.com
-  #   portal_emails_reply_to: none@example.com
-  #   admin_emails_from: none@example.com
-  #   admin_emails_reply_to: none@example.com
-  #   smtp_admin_emails: none@example.com
-  #   smtp_host: smtp.example.com
-  #   smtp_port: 587
-  #   smtp_auth_type: ''
-  #   smtp_ssl: nil
-  #   smtp_starttls: true
-  #   auth:
-  #     smtp_username: ''  # e.g. postmaster@example.com
-  #     smtp_password_secret: CHANGEME-smtp-password
 
 manager:
   enabled: true
@@ -118,7 +98,7 @@ manager:
   ingress:
     enabled: true
     tls: ingress-manager-tls-secret
-    hostname: manager.kong.deejiw.example
+    hostname: manager.kong.deejiw.com
     annotations: {}
     path: /
 
@@ -146,7 +126,7 @@ portal:
   ingress:
     enabled: true
     tls: ingress-portal-tls-secret
-    hostname: portal.kong.deejiw.example
+    hostname: portal.kong.deejiw.com
     annotations:
       kubernetes.io/ingress.class: "kong"
     path: /
@@ -175,7 +155,7 @@ portalapi:
   ingress:
     enabled: true
     tls: ingress-portalapi-tls-secret
-    hostname: portalapi.kong.deejiw.example
+    hostname: portalapi.kong.deejiw.com
     annotations:
       kubernetes.io/ingress.class: "kong"
     path: /
@@ -185,6 +165,7 @@ portalapi:
 postgresql:
   enabled: true
   postgresqlUsername: kong
+  postgresqlPassword: password
   postgresqlDatabase: kong
   service:
     port: 5432
