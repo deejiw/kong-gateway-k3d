@@ -10,10 +10,10 @@ k3d cluster create k3s-local --k3s-arg '--no-deploy=traefik@server:*' --servers 
 kubectl create namespace kong
 kubectl create secret generic kong-superuser-password -n kong --from-literal=password=changeit
 kubectl create secret tls ingress-admin-tls-secret --key ./configmap/kong/ingress-admin.key --cert ./configmap/kong/ingress-admin.crt -n kong
-kubectl create secret tls ingress-manager-tls-secret --key ./configmap/kong/ingress-manager.key --cert ./configmap/kong/ingress-manager.crt -n kong
-kubectl create secret tls ingress-portal-tls-secret --key ./configmap/kong/ingress-portal.key --cert ./configmap/kong/ingress-portal.crt -n kong
+<!-- kubectl create secret tls ingress-manager-tls-secret --key ./configmap/kong/ingress-manager.key --cert ./configmap/kong/ingress-manager.crt -n kong
+kubectl create secret tls ingress-portal-tls-secret --key ./configmap/kong/ingress-portal.key --cert ./configmap/kong/ingress-portal.crt -n kong -->
 
-helm install my-kong kong/kong -n kong --values ./charts/kong/values.yml
+helm install my-kong kong/kong -n kong --values ./charts/kong/minimal.yml
 helm install konga ./charts/konga -n kong --values ./charts/konga/values.yml
 
 #### Set Kong Admin API for Konga UI

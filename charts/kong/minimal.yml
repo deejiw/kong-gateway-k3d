@@ -28,12 +28,7 @@ admin:
   enabled: true
   annotations:
     konghq.com/protocol: "https"
-    telegraf.influxdata.com/image: telegraf:1.21-alpine
-    telegraf.influxdata.com/class: "kong"
-    telegraf.influxdata.com/interval: 1s
-    telegraf.influxdata.com/path: /status
-    telegraf.influxdata.com/port: "8100"
-    telegraf.influxdata.com/scheme: http
+    
   tls:
     enabled: true
     servicePort: 8444
@@ -96,7 +91,7 @@ manager:
     - http2
 
   ingress:
-    enabled: true
+    enabled: false
     tls: ingress-manager-tls-secret
     hostname: manager.kong.deejiw.com
     annotations: {}
@@ -124,7 +119,7 @@ portal:
     - http2
 
   ingress:
-    enabled: true
+    enabled: false
     tls: ingress-portal-tls-secret
     hostname: portal.kong.deejiw.com
     annotations:
@@ -153,7 +148,7 @@ portalapi:
     - http2
 
   ingress:
-    enabled: true
+    enabled: false
     tls: ingress-portalapi-tls-secret
     hostname: portalapi.kong.deejiw.com
     annotations:
@@ -171,7 +166,7 @@ postgresql:
     port: 5432
 
 ingressController:
-  enabled: true
+  enabled: false
   installCRDs: false
   env:
     kong_admin_token:
@@ -179,4 +174,15 @@ ingressController:
         secretKeyRef:
           name: kong-superuser-password
           key: password
-    admin_api_uri: ${KONG_ADMIN_IP}
+    # admin_api_uri: ${KONG_ADMIN_IP}
+
+podAnnotations:
+  telegraf.influxdata.com/image: telegraf:1.21-alpine
+  telegraf.influxdata.com/class: kong
+  telegraf.influxdata.com/inputs: |+
+    [[inputs.http]]
+      urls = ["http://127.0.0.1:8100/status"]
+      interval = "5s"
+      data_format = "json"
+
+
