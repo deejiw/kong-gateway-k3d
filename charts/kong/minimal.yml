@@ -160,7 +160,6 @@ portalapi:
 postgresql:
   enabled: true
   postgresqlUsername: kong
-  postgresqlPassword: password
   postgresqlDatabase: kong
   service:
     port: 5432
@@ -179,7 +178,10 @@ ingressController:
 podAnnotations:
   telegraf.influxdata.com/image: telegraf:1.21-alpine
   telegraf.influxdata.com/class: kong
-  telegraf.influxdata.com/port: "8100"
-  telegraf.influxdata.com/interval: 5s
+  telegraf.influxdata.com/inputs: |+
+    [[inputs.http]]
+      urls = ["http://127.0.0.1:8100/status"]
+      interval = "5s"
+      data_format = "json"
 
 
