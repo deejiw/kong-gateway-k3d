@@ -1,0 +1,11 @@
+# Should work with k3d>=5.3 && k3s>=1.23
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  kong.server: |
+    apigw-dev.kong.nonprod.deejiw.com {
+      forward . 10.43.72.240:80
+    }

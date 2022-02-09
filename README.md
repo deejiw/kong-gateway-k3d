@@ -11,8 +11,10 @@ kubectl create secret tls ingress-admin-tls-secret --key ./configmap/kong/ingres
 
 helm install my-kong kong/kong -n kong --values ./charts/kong/minimal.yml
 helm install konga ./charts/konga -n kong --values ./charts/konga/values.yml
+kubectl delete jobs -n kong --all
 
 #### Set Kong Admin API for Konga UI
 https://<KongPod>:8444
 
-#### Add DNS for Kong Gateway
+#### Add Custom DNS for Kong Proxy LB 
+kubectl apply -f ./manifests/coredns-custom.yml
