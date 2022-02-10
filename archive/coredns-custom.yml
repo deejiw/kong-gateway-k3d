@@ -6,6 +6,8 @@ metadata:
   namespace: kube-system
 data:
   kong.server: |
-    apigw-dev.kong.nonprod.deejiw.com {
-      forward . 10.43.72.240:80
+    admin.kong.deejiw.com {
+      log
+      cache 30
+      forward . 10.43.25.63:80
     }

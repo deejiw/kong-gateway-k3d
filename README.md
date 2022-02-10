@@ -1,5 +1,5 @@
 #### Create k3d cluster without traefik as default ingress class
-k3d cluster create k3s-local --k3s-arg '--no-deploy=traefik@server:*' --servers 3
+k3d cluster create k3s-local --k3s-arg '--no-deploy=traefik@server:*' --k3s-arg '--write-kubeconfig-mode=644@server:*' --servers 3
 
 #### Create TLS pairs
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ingress-admin.key -out ingress-admin.crt -subj "/CN=admin.kong.deejiw.com/O=admin.kong.deejiw.com"
@@ -9,12 +9,41 @@ kubectl create namespace kong
 kubectl create secret generic kong-superuser-password -n kong --from-literal=password=changeit
 kubectl create secret tls ingress-admin-tls-secret --key ./configmap/kong/ingress-admin.key --cert ./configmap/kong/ingress-admin.crt -n kong
 
+#### Install Kong Ingress Controller and Konga UI
 helm install my-kong kong/kong -n kong --values ./charts/kong/minimal.yml
 helm install konga ./charts/konga -n kong --values ./charts/konga/values.yml
 kubectl delete jobs -n kong --all
 
-#### Set Kong Admin API for Konga UI
-https://<KongPod>:8444
+#### Apply echo pod/service for demonstration
+kubectl apply -f ./manifests/echo.yml
 
-#### Add Custom DNS for Kong Proxy LB 
-kubectl apply -f ./manifests/coredns-custom.yml
+#### Get IPs for Kong Proxy LB and Kong Admin
+export KONG_PROXY_LB=$(kubectl get svc/my-kong-kong-proxy -n kong -o=jsonpath='{.spec.clusterIP}')
+export KONG_ADMIN_POD=$(kubectl get pod --selector=app=my-kong-kong -n kong -o=jsonpath='{.items[0].status.podIP}')
+
+#### Initialize Kong Connection for Konga UI
+https://$KONG_ADMIN_POD:8444
+
+#### Add service/route
+__Service__
+Name: echo-foo
+Protocol: http
+Host: echo.default
+Port: 80
+Path: /foo
+
+__Route__
+Name: echo-foo-route
+Hosts: apigw.kong.deejiw.com
+Path: /echo/foo
+
+#### Add Kong Proxy LB to NodeHosts
+kubectl edit cm/coredns -n kube-system
+
+NodeHosts:
+...
+...
+Add -> $KONG_PROXY_LB apigw.kong.deejiw.com
+
+#### Curl test from postgresql container
+kubectl exec -it my-kong-postgresql-0 -n kong -- curl http://apigw.kong.deejiw.com/echo/foo
