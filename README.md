@@ -57,5 +57,3 @@ NodeHosts: \
 #### HTTP and HTTPS Connectivity Testing
 `kubectl exec -it my-kong-postgresql-0 -n kong -- curl http://apigw.kong.deejiw.com/echo/foo` \
 `kubectl exec -it my-kong-postgresql-0 -n kong -- curl -k https://apigw.kong.deejiw.com/echo/foo`
-
-## CONGRATULATIONS AND NEVER STOP LEARNING
