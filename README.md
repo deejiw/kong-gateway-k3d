@@ -27,6 +27,9 @@ This guide introduces anyone who is interested in doing local hands-on experienc
 `export KONG_PROXY_LB=$(kubectl get svc/my-kong-kong-proxy -n kong -o=jsonpath='{.spec.clusterIP}')` \
 `export KONG_ADMIN_POD=$(kubectl get pod --selector=app=my-kong-kong -n kong -o=jsonpath='{.items[0].status.podIP}')`
 
+#### Set Kong Gateway Domain
+`export KONG_GATEWAY_DOMAIN=apigw.kong.deejiw.com`
+
 #### Initialize Kong Connection for Konga UI
 `https://$KONG_ADMIN_POD:8444`
 
@@ -40,7 +43,7 @@ Path: /foo \
 
 __Route__
 Name: echo-foo-route \
-Hosts: apigw.kong.deejiw.com \
+Hosts: `$KONG_GATEWAY_DOMAIN` \
 Path: /echo/foo
 
 #### Add DNS for Kong Proxy LB
@@ -49,7 +52,7 @@ Path: /echo/foo
 NodeHosts: \
 ... \
 ... \
-_$KONG_PROXY_LB apigw.kong.deejiw.com_
+`$KONG_PROXY_LB $KONG_GATEWAY_DOMAIN`
 
 #### HTTP and HTTPS Connectivity Testing
 `kubectl exec -it my-kong-postgresql-0 -n kong -- curl http://apigw.kong.deejiw.com/echo/foo` \
