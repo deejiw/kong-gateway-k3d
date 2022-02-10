@@ -37,7 +37,7 @@ Name: echo-foo-route
 Hosts: apigw.kong.deejiw.com
 Path: /echo/foo
 
-#### Add Kong Proxy LB to NodeHosts
+#### Add DNS for Kong Proxy LB
 kubectl edit cm/coredns -n kube-system
 
 NodeHosts:
@@ -45,5 +45,6 @@ NodeHosts:
 ...
 Add -> $KONG_PROXY_LB apigw.kong.deejiw.com
 
-#### Curl test from postgresql container
+#### HTTP and HTTPS Connectivity Testing
 kubectl exec -it my-kong-postgresql-0 -n kong -- curl http://apigw.kong.deejiw.com/echo/foo
+kubectl exec -it my-kong-postgresql-0 -n kong -- curl -k https://apigw.kong.deejiw.com/echo/foo
