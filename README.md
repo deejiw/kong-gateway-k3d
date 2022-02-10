@@ -1,5 +1,5 @@
 ## Kong Ingress Controller on k3d
-This guide introduces anyone who is interested in doing local hands-on experience with Kong Ingress Controller on Kubernetes cluster
+This guide introduces anyone who is interested in doing local hands-on experience with Kong Ingress Controller on k3d cluster
 
 #### Install k3d (5.3.0)
 `wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v5.3.0 bash`
