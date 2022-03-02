@@ -88,21 +88,12 @@ tolerations: []
 
 affinity: {}
 
-# For TLS i.e. https://localhost:1337
-# extraVolumes:
-#   - name: konga-ssl-key
-#     configMap:
-#       name: konga-ssl-key
-#   - name: konga-ssl-crt
-#     configMap:
-#       name: konga-ssl-crt
 
-# extraVolumeMounts:
-#   - name: konga-ssl-key
-#     mountPath: /opt/ssl/ingress-admin.key
-#     subPath: ingress-admin.key
-#     readOnly: true
-#   - name: konga-ssl-crt
-#     mountPath: /opt/ssl/ingress-admin.crt
-#     subPath: ingress-admin.crt
-#     readOnly: true
+extraVolumes:
+  - name: konga-storage
+    persistentVolumeClaim:
+      claimName: konga-storage
+
+extraVolumeMounts:
+  - name: konga-storage
+    mountPath: /kongadata
